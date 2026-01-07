@@ -56,9 +56,9 @@ function App() {
          Ek: 0.5 * params.mass * state.v1 * state.v1,
          Q: 0
        };
-       return [...prev, newData].slice(-1000); // 保持最近1000个点
+       return [...prev, newData].slice(-1000);
     });
-  }, [state, params, modelType]);
+  }, [state, params, modelType, history.length]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -70,7 +70,7 @@ function App() {
   }, [isPlaying, updateLoop]);
 
   return (
-    <div className="flex h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
+    <div className="app-container">
       <Controls 
         modelType={modelType} 
         params={params} 
@@ -80,23 +80,23 @@ function App() {
         togglePlay={() => setIsPlaying(!isPlaying)}
       />
 
-      <div className="flex-1 flex flex-col p-6 overflow-y-auto">
-        <header className="mb-6 flex justify-between items-center">
+      <div className="main-content">
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">物理滑块动力学可视化</h1>
-            <p className="text-slate-400 text-sm">Interactive Mechanics Lab</p>
+            <h1 style={{ margin: 0, fontSize: '1.5rem' }}>物理动力学可视化实验室</h1>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-dim)' }}>Physics Slider Lab v2.0</p>
           </div>
           
-          <div className="flex bg-slate-800 p-1 rounded-lg">
+          <div className="tab-bar">
             {[
-              { id: 'single', icon: Box, label: '单体/斜面' },
+              { id: 'single', icon: Box, label: '单体斜面' },
               { id: 'belt', icon: ArrowRightLeft, label: '传送带' },
               { id: 'plank', icon: Layers, label: '板块/叠块' }
             ].map(tab => (
               <button 
                 key={tab.id}
                 onClick={() => changeModel(tab.id as ModelType)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition ${modelType === tab.id ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                className={`tab-btn ${modelType === tab.id ? 'active' : ''}`}
               >
                 <tab.icon size={16} /> {tab.label}
               </button>
@@ -104,10 +104,8 @@ function App() {
           </div>
         </header>
 
-        <main className="flex-1">
-          <Visualizer type={modelType} params={params} state={state} />
-          <Charts data={history} modelType={modelType} />
-        </main>
+        <Visualizer type={modelType} params={params} state={state} />
+        <Charts data={history} modelType={modelType} />
       </div>
     </div>
   );
